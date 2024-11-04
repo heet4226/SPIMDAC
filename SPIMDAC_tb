@@ -1,0 +1,66 @@
+----------------------------------------------------------------------------------
+-- Engineer: Heet Vinodbhai Gadhiya
+-- 
+-- Create Date: 06/06/2023 04:34:56 PM
+-- Module Name: spimdac_tb - Test Bench Code
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity spimdac_tb is
+--  Port ( );
+end spimdac_tb;
+
+architecture Behavioral of spimdac_tb is
+
+COMPONENT spimdac IS
+    Port ( reset : in STD_LOGIC;
+           bclk : in STD_LOGIC;
+           start : in STD_LOGIC;
+           sndData : in STD_LOGIC_VECTOR (7 downto 0);
+           rcvData : out STD_LOGIC_VECTOR (7 downto 0));
+END COMPONENT spimdac;
+
+
+
+SIGNAL reset : STD_LOGIC := '0';
+SIGNAL bclk : STD_LOGIC := '0';
+SIGNAL start : STD_LOGIC := '0';
+SIGNAL sndData :STD_LOGIC_VECTOR (7 downto 0) := x"A5";
+SIGNAL rcvData : STD_LOGIC_VECTOR (7 downto 0) := x"00";
+
+CONSTANT clk_period : time := 10ns;
+
+begin   
+    uut : spimdac
+    PORT MAP (reset=> reset,
+              bclk =>bclk,
+              start=> start,
+              sndData =>sndData,
+              rcvData =>rcvData);
+              
+              
+    bclk_p : PROCESS 
+    BEGIN 
+        WAIT for clk_period /2;
+        bclk <= '1';
+        WAIT for clk_period /2;
+        bclk <= '0';         
+    END PROCESS bclk_p;   
+    
+    stim_p : PROCESS 
+    BEGIN 
+            WAIT for clk_period ;
+            reset <= '1';
+            WAIT for clk_period ;
+            reset <= '0'; 
+            WAIT for clk_period ;
+            start <= '1';
+            WAIT for clk_period *3 ;
+            start <= '0';
+            WAIT;          
+    END PROCESS   stim_p;   
+end Behavioral;
